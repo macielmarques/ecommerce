@@ -1,22 +1,31 @@
 <?php 
 
-	require_once("vendor/autoload.php");
-	                                                 
-	use \Slim\Slim;
-	use \Hcode\Page;
+require_once("vendor/autoload.php");
 
-	$app = new \Slim\Slim();
+use \Slim\Slim;
+use \Hcode\Page;
+use \Hcode\PageAdmin;
 
-	$app->config('debug', true);
+$app = new \Slim\Slim();
 
-	$app->get('/', function() {
-	    
-		$page = new Page();
+$app->config('debug', true);
 
-		$page->setTpl("index");
+$app->get('/', function() {
+    
+	$page = new Page();
 
-	});
+	$page->setTpl("index");
 
-	$app->run();
+});
+
+$app->get('/admin', function() {
+    
+	$page = new PageAdmin();
+
+	$page->setTpl("index");
+
+});
+
+$app->run();
 
  ?>
