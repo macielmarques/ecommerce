@@ -9,7 +9,7 @@
 	{
 
 		const SESSION = "User";
-		const SECRET = "HcodePhp7_Secret";
+		const SECRET = "njstiuaowonsgyov";
 		
 		/*protected $fields = [
 			"iduser", "idperson", "deslogin", "despassword", "inadmin", "dtergister"
@@ -180,14 +180,13 @@
 		            } else {
 		                $link = "http://www.hcodecommerce.com.br/forgot/reset?code=$result";
 		            } 
-		            /*
+		            
 		            $mailer = new Mailer($data['desemail'], $data['desperson'], "redefinir senha da Hcode Store", "forgot", array(
 		            	"name"=>$data['desperson'],
 		            	"link"=>$link
-		            ));*/
-		            //$mailer->send();
+		            ));
+		            $mailer->send();
 		            return $link;
-		        }
 		    }
 		}
 

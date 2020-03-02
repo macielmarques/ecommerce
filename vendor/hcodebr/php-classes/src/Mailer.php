@@ -7,7 +7,7 @@
 	class Mailer {
 
 		const USERNAME = "macielsuporte15@gmail.com";
-		const PASSWORD = "21314178";
+		const PASSWORD = "njstiuaowonsgyov";
 		const NAME_FROM = "Hcode Store";
 
 		private $this->mail;
@@ -16,7 +16,7 @@
 		{
 
 			$config = array(
-		    //"base_url"      => null,
+		    "base_url"      => null,
 		    "tpl_dir"       => $_SERVER['DOCUMENT_ROOT']."/views/email/",
 		    "cache_dir"     => $_SERVER['DOCUMENT_ROOT']."/views-cache/",
 		    "debug"         => false
