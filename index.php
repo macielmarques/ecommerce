@@ -181,7 +181,7 @@
 		$page->setTpl("forgot");
 	});
 
-	$app->post("/admin/forgot", function() {
+	$app->post("/admin/forgot", function(){
 
 		$user = User::getForgot($_POST["email"]);
 
@@ -190,7 +190,7 @@
 
 	});
 
-	$app->get("/admin/forgot/sent", function() {
+	$app->get("/admin/forgot/sent", function(){
 
 		$page = new PageAdmin([
 			"header"=>false,

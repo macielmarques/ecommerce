@@ -40,19 +40,13 @@
 			//Tell PHPMailer to use SMTP
 			$this->mail->isSMTP();
 
-			$this->mail->SMTPOptions = array(
-				'ssl'=>array(
-				'verify_peer'=>false,
-				'verify_peer_name'=>false,
-				'allow_self_signed'=>true
-				)
-			);
+			
 
 			//Enable SMTP debugging
 			// 0 = off (for production use)
 			// 1 = client messages
 			// 2 = client and server messages
-			$this->mail->SMTPDebug = 2;
+			$this->mail->SMTPDebug = 0;
 
 			//Ask for HTML-friendly debug output
 			$this->mail->Debugoutput = 'html';
@@ -65,6 +59,14 @@
 
 			//Set the SMTP port number - 587 for authenticated TLS, a.k.a. RFC4409 SMTP submission
 			$this->mail->Port = 587;
+
+			$this->mail->SMTPOptions = array(
+				'ssl'=>array(
+				'verify_peer'=>false,
+				'verify_peer_name'=>false,
+				'allow_self_signed'=>true
+				)
+			);
 
 			//Set the encryption system to use - ssl (deprecated) or tls
 			$this->mail->SMTPSecure = 'tls';
