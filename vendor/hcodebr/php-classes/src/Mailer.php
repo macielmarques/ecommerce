@@ -3,6 +3,7 @@
 	namespace Hcode;
 
 	use Rain\Tpl;
+	//use \Hcode\Model\Mailer;
 
 	class Mailer {
 
@@ -34,6 +35,8 @@
 
 			//Create a new PHPMailer instance
 			$this->mail = new \PHPMailer;
+
+			//$this->mail = new \PHPMailer\PHPMailer\PHPMailer;
 
 			$this->mail->CharSet = 'UTF-8';
 

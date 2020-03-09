@@ -4,6 +4,7 @@
 
 	use \Hcode\DB\Sql;
 	use \Hcode\Model;
+	use \Hcode\Mailer;
 
 	class User extends Model 
 	{
@@ -187,8 +188,9 @@
 		            ));
 		            $mailer->send();
 		            return $link;
-		    }
-		}
+		    	}
+			}
+		}	
 
 		public static function validForgotDecrypt($result)
 		{
