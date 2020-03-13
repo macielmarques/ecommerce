@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.1
+-- version 5.0.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 02, 2020 at 03:25 AM
--- Server version: 10.4.8-MariaDB
--- PHP Version: 7.3.11
+-- Generation Time: Mar 13, 2020 at 05:41 PM
+-- Server version: 10.4.11-MariaDB
+-- PHP Version: 7.4.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -43,6 +43,34 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_categories_save` (`pidcategory` 
     END IF;
     
     SELECT * FROM tb_categories WHERE idcategory = pidcategory;
+    
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_products_save` (`pidproduct` INT(11), `pdesproduct` VARCHAR(64), `pvlprice` DECIMAL(10,2), `pvlwidth` DECIMAL(10,2), `pvlheight` DECIMAL(10,2), `pvllength` DECIMAL(10,2), `pvlweight` DECIMAL(10,2), `pdesurl` VARCHAR(128))  BEGIN
+	
+	IF pidproduct > 0 THEN
+		
+		UPDATE tb_products
+        SET 
+			desproduct = pdesproduct,
+            vlprice = pvlprice,
+            vlwidth = pvlwidth,
+            vlheight = pvlheight,
+            vllength = pvllength,
+            vlweight = pvlweight,
+            desurl = pdesurl
+        WHERE idproduct = pidproduct;
+        
+    ELSE
+		
+		INSERT INTO tb_products (desproduct, vlprice, vlwidth, vlheight, vllength, vlweight, desurl) 
+        VALUES(pdesproduct, pvlprice, pvlwidth, pvlheight, pvllength, pvlweight, pdesurl);
+        
+        SET pidproduct = LAST_INSERT_ID();
+        
+    END IF;
+    
+    SELECT * FROM tb_products WHERE idproduct = pidproduct;
     
 END$$
 
@@ -172,6 +200,27 @@ CREATE TABLE `tb_categories` (
   `dtregister` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `tb_categories`
+--
+
+INSERT INTO `tb_categories` (`idcategory`, `descategory`, `dtregister`) VALUES
+(3, 'Adroid', '2020-03-09 18:23:10'),
+(4, 'Apple', '2020-03-09 18:48:19'),
+(5, 'Motorola', '2020-03-09 18:48:30'),
+(6, 'Sumsung', '2020-03-09 18:48:42');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tb_categoriesproducts`
+--
+
+CREATE TABLE `tb_categoriesproducts` (
+  `idcategory` int(11) NOT NULL,
+  `idproduct` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- --------------------------------------------------------
 
 --
@@ -257,9 +306,12 @@ CREATE TABLE `tb_products` (
 --
 
 INSERT INTO `tb_products` (`idproduct`, `desproduct`, `vlprice`, `vlwidth`, `vlheight`, `vllength`, `vlweight`, `desurl`, `dtregister`) VALUES
-(1, 'Smartphone Android 7.0', '999.95', '75.00', '151.00', '80.00', '167.00', 'smartphone-android-7.0', '2017-03-13 03:00:00'),
-(2, 'SmartTV LED 4K', '3925.99', '917.00', '596.00', '288.00', '8600.00', 'smarttv-led-4k', '2017-03-13 03:00:00'),
-(3, 'Notebook 14\" 4GB 1TB', '1949.99', '345.00', '23.00', '30.00', '2000.00', 'notebook-14-4gb-1tb', '2017-03-13 03:00:00');
+(4, 'Ipad Celular 32GB Wi-Fi Tela 9,7\" Câmera 8MP Cinza Espacial - Ap', '2599.95', '0.75', '16.95', '24.50', '0.47', 'ipad-32gb', '2020-03-12 00:57:10'),
+(7, 'Smartphone Motorola Moto G5 Plus', '1135.23', '15.20', '7.40', '0.70', '0.16', 'smartphone-motorola-moto-g5-plus', '2020-03-12 23:38:15'),
+(8, 'Smartphone Moto Z Play', '1887.78', '14.10', '0.90', '1.16', '0.13', 'smartphone-moto-z-play', '2020-03-12 23:38:15'),
+(9, 'Smartphone Samsung Galaxy J5 Pro', '1299.00', '14.60', '7.10', '0.80', '0.16', 'smartphone-samsung-galaxy-j5', '2020-03-12 23:38:15'),
+(10, 'Smartphone Samsung Galaxy J7 Prime', '1149.00', '15.10', '7.50', '0.80', '0.16', 'smartphone-samsung-galaxy-j7', '2020-03-12 23:38:15'),
+(11, 'Smartphone Samsung Galaxy J3 Dual', '679.90', '14.20', '7.10', '0.70', '0.14', 'smartphone-samsung-galaxy-j3', '2020-03-12 23:38:15');
 
 -- --------------------------------------------------------
 
@@ -271,6 +323,17 @@ CREATE TABLE `tb_productscategories` (
   `idcategory` int(11) NOT NULL,
   `idproduct` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `tb_productscategories`
+--
+
+INSERT INTO `tb_productscategories` (`idcategory`, `idproduct`) VALUES
+(3, 7),
+(3, 8),
+(3, 9),
+(3, 10),
+(3, 11);
 
 -- --------------------------------------------------------
 
@@ -475,7 +538,48 @@ INSERT INTO `tb_userspasswordsrecoveries` (`idrecovery`, `iduser`, `desip`, `dtr
 (142, 17, '127.0.0.1', NULL, '2020-03-02 02:08:17'),
 (143, 17, '127.0.0.1', NULL, '2020-03-02 02:08:31'),
 (144, 17, '127.0.0.1', NULL, '2020-03-02 02:10:48'),
-(145, 17, '127.0.0.1', NULL, '2020-03-02 02:11:11');
+(145, 17, '127.0.0.1', NULL, '2020-03-02 02:11:11'),
+(146, 17, '127.0.0.1', NULL, '2020-03-08 06:23:46'),
+(147, 17, '127.0.0.1', NULL, '2020-03-08 06:28:08'),
+(148, 17, '127.0.0.1', NULL, '2020-03-08 06:32:05'),
+(149, 17, '127.0.0.1', NULL, '2020-03-08 06:35:10'),
+(150, 17, '127.0.0.1', NULL, '2020-03-08 06:41:25'),
+(151, 17, '127.0.0.1', NULL, '2020-03-08 06:41:42'),
+(152, 17, '127.0.0.1', NULL, '2020-03-08 21:04:21'),
+(153, 17, '127.0.0.1', NULL, '2020-03-08 21:17:10'),
+(154, 17, '127.0.0.1', NULL, '2020-03-08 21:18:29'),
+(155, 17, '127.0.0.1', NULL, '2020-03-08 21:18:34'),
+(156, 17, '127.0.0.1', NULL, '2020-03-09 15:42:18'),
+(157, 17, '127.0.0.1', NULL, '2020-03-09 15:43:29'),
+(158, 17, '127.0.0.1', NULL, '2020-03-09 15:46:19'),
+(159, 17, '127.0.0.1', NULL, '2020-03-09 15:47:01'),
+(160, 17, '127.0.0.1', NULL, '2020-03-09 15:47:21'),
+(161, 17, '127.0.0.1', NULL, '2020-03-09 15:47:52'),
+(162, 17, '127.0.0.1', NULL, '2020-03-09 15:48:11'),
+(163, 17, '127.0.0.1', NULL, '2020-03-09 15:49:17'),
+(164, 17, '127.0.0.1', NULL, '2020-03-09 15:49:42'),
+(165, 17, '127.0.0.1', NULL, '2020-03-09 16:11:44'),
+(166, 17, '127.0.0.1', NULL, '2020-03-09 16:12:20'),
+(167, 17, '127.0.0.1', NULL, '2020-03-09 16:16:17'),
+(168, 17, '127.0.0.1', NULL, '2020-03-09 16:16:26'),
+(169, 17, '127.0.0.1', NULL, '2020-03-09 16:17:19'),
+(170, 17, '127.0.0.1', NULL, '2020-03-09 16:17:33'),
+(171, 17, '127.0.0.1', NULL, '2020-03-09 16:19:04'),
+(172, 17, '127.0.0.1', NULL, '2020-03-09 16:19:43'),
+(173, 17, '127.0.0.1', NULL, '2020-03-09 19:19:41'),
+(174, 17, '127.0.0.1', NULL, '2020-03-11 01:32:23'),
+(175, 17, '127.0.0.1', NULL, '2020-03-11 01:33:52'),
+(176, 17, '127.0.0.1', NULL, '2020-03-11 01:34:01'),
+(177, 17, '127.0.0.1', NULL, '2020-03-11 01:34:20'),
+(178, 17, '127.0.0.1', NULL, '2020-03-11 01:35:16'),
+(179, 17, '127.0.0.1', NULL, '2020-03-11 01:36:02'),
+(180, 17, '127.0.0.1', NULL, '2020-03-11 01:36:16'),
+(181, 17, '127.0.0.1', NULL, '2020-03-12 17:03:15'),
+(182, 17, '127.0.0.1', NULL, '2020-03-12 17:06:39'),
+(183, 17, '127.0.0.1', NULL, '2020-03-12 17:10:19'),
+(184, 17, '127.0.0.1', NULL, '2020-03-12 17:13:41'),
+(185, 17, '127.0.0.1', NULL, '2020-03-12 17:17:10'),
+(186, 17, '127.0.0.1', NULL, '2020-03-12 17:23:47');
 
 --
 -- Indexes for dumped tables
@@ -509,6 +613,12 @@ ALTER TABLE `tb_cartsproducts`
 --
 ALTER TABLE `tb_categories`
   ADD PRIMARY KEY (`idcategory`);
+
+--
+-- Indexes for table `tb_categoriesproducts`
+--
+ALTER TABLE `tb_categoriesproducts`
+  ADD PRIMARY KEY (`idcategory`,`idproduct`);
 
 --
 -- Indexes for table `tb_orders`
@@ -585,7 +695,7 @@ ALTER TABLE `tb_cartsproducts`
 -- AUTO_INCREMENT for table `tb_categories`
 --
 ALTER TABLE `tb_categories`
-  MODIFY `idcategory` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idcategory` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `tb_orders`
@@ -609,7 +719,7 @@ ALTER TABLE `tb_persons`
 -- AUTO_INCREMENT for table `tb_products`
 --
 ALTER TABLE `tb_products`
-  MODIFY `idproduct` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `idproduct` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `tb_users`
@@ -627,7 +737,7 @@ ALTER TABLE `tb_userslogs`
 -- AUTO_INCREMENT for table `tb_userspasswordsrecoveries`
 --
 ALTER TABLE `tb_userspasswordsrecoveries`
-  MODIFY `idrecovery` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
+  MODIFY `idrecovery` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=187;
 
 --
 -- Constraints for dumped tables
@@ -679,12 +789,6 @@ ALTER TABLE `tb_users`
 --
 ALTER TABLE `tb_userslogs`
   ADD CONSTRAINT `fk_userslogs_users` FOREIGN KEY (`iduser`) REFERENCES `tb_users` (`iduser`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Constraints for table `tb_userspasswordsrecoveries`
---
-ALTER TABLE `tb_userspasswordsrecoveries`
-  ADD CONSTRAINT `fk_userspasswordsrecoveries_users` FOREIGN KEY (`iduser`) REFERENCES `tb_users` (`iduser`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
