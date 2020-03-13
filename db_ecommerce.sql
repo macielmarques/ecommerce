@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 13, 2020 at 05:41 PM
+-- Generation Time: Mar 13, 2020 at 07:28 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.3
 
@@ -213,17 +213,6 @@ INSERT INTO `tb_categories` (`idcategory`, `descategory`, `dtregister`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tb_categoriesproducts`
---
-
-CREATE TABLE `tb_categoriesproducts` (
-  `idcategory` int(11) NOT NULL,
-  `idproduct` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `tb_orders`
 --
 
@@ -333,7 +322,8 @@ INSERT INTO `tb_productscategories` (`idcategory`, `idproduct`) VALUES
 (3, 8),
 (3, 9),
 (3, 10),
-(3, 11);
+(3, 11),
+(5, 7);
 
 -- --------------------------------------------------------
 
@@ -613,12 +603,6 @@ ALTER TABLE `tb_cartsproducts`
 --
 ALTER TABLE `tb_categories`
   ADD PRIMARY KEY (`idcategory`);
-
---
--- Indexes for table `tb_categoriesproducts`
---
-ALTER TABLE `tb_categoriesproducts`
-  ADD PRIMARY KEY (`idcategory`,`idproduct`);
 
 --
 -- Indexes for table `tb_orders`
