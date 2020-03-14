@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 13, 2020 at 07:28 PM
+-- Generation Time: Mar 14, 2020 at 11:51 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.3
 
@@ -26,6 +26,32 @@ DELIMITER $$
 --
 -- Procedures
 --
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_carts_save` (`pidcart` INT, `pdessessionid` VARCHAR(64), `piduser` INT, `pdeszipcode` CHAR(8), `pvlfreight` DECIMAL(10,2), `pnrdays` INT)  BEGIN
+
+    IF pidcart > 0 THEN
+        
+        UPDATE tb_carts
+        SET
+            dessessionid = pdessessionid,
+            iduser = piduser,
+            deszipcode = pdeszipcode,
+            vlfreight = pvlfreight,
+            nrdays = pnrdays
+        WHERE idcart = pidcart;
+        
+    ELSE
+        
+        INSERT INTO tb_carts (dessessionid, iduser, deszipcode, vlfreight, nrdays)
+        VALUES(pdessessionid, piduser, pdeszipcode, pvlfreight, pnrdays);
+        
+        SET pidcart = LAST_INSERT_ID();
+        
+    END IF;
+    
+    SELECT * FROM tb_carts WHERE idcart = pidcart;
+
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_categories_save` (`pidcategory` INT, `pdescategory` VARCHAR(64))  BEGIN
 	
 	IF pidcategory > 0 THEN
@@ -169,10 +195,18 @@ CREATE TABLE `tb_carts` (
   `idcart` int(11) NOT NULL,
   `dessessionid` varchar(64) NOT NULL,
   `iduser` int(11) DEFAULT NULL,
-  `idaddress` int(11) DEFAULT NULL,
+  `deszipcode` char(8) DEFAULT NULL,
   `vlfreight` decimal(10,2) DEFAULT NULL,
+  `nrdays` int(11) DEFAULT NULL,
   `dtregister` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `tb_carts`
+--
+
+INSERT INTO `tb_carts` (`idcart`, `dessessionid`, `iduser`, `deszipcode`, `vlfreight`, `nrdays`, `dtregister`) VALUES
+(1, 'cj0030o0itubihece7q0194eu2', NULL, NULL, NULL, NULL, '2020-03-14 21:47:23');
 
 -- --------------------------------------------------------
 
@@ -569,7 +603,10 @@ INSERT INTO `tb_userspasswordsrecoveries` (`idrecovery`, `iduser`, `desip`, `dtr
 (183, 17, '127.0.0.1', NULL, '2020-03-12 17:10:19'),
 (184, 17, '127.0.0.1', NULL, '2020-03-12 17:13:41'),
 (185, 17, '127.0.0.1', NULL, '2020-03-12 17:17:10'),
-(186, 17, '127.0.0.1', NULL, '2020-03-12 17:23:47');
+(186, 17, '127.0.0.1', NULL, '2020-03-12 17:23:47'),
+(187, 17, '127.0.0.1', NULL, '2020-03-14 15:17:12'),
+(188, 17, '127.0.0.1', NULL, '2020-03-14 15:43:03'),
+(189, 17, '127.0.0.1', NULL, '2020-03-14 15:47:15');
 
 --
 -- Indexes for dumped tables
@@ -587,8 +624,7 @@ ALTER TABLE `tb_addresses`
 --
 ALTER TABLE `tb_carts`
   ADD PRIMARY KEY (`idcart`),
-  ADD KEY `FK_carts_users_idx` (`iduser`),
-  ADD KEY `fk_carts_addresses_idx` (`idaddress`);
+  ADD KEY `FK_carts_users_idx` (`iduser`);
 
 --
 -- Indexes for table `tb_cartsproducts`
@@ -670,6 +706,12 @@ ALTER TABLE `tb_addresses`
   MODIFY `idaddress` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `tb_carts`
+--
+ALTER TABLE `tb_carts`
+  MODIFY `idcart` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `tb_cartsproducts`
 --
 ALTER TABLE `tb_cartsproducts`
@@ -721,7 +763,7 @@ ALTER TABLE `tb_userslogs`
 -- AUTO_INCREMENT for table `tb_userspasswordsrecoveries`
 --
 ALTER TABLE `tb_userspasswordsrecoveries`
-  MODIFY `idrecovery` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=187;
+  MODIFY `idrecovery` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=190;
 
 --
 -- Constraints for dumped tables
@@ -737,7 +779,6 @@ ALTER TABLE `tb_addresses`
 -- Constraints for table `tb_carts`
 --
 ALTER TABLE `tb_carts`
-  ADD CONSTRAINT `fk_carts_addresses` FOREIGN KEY (`idaddress`) REFERENCES `tb_addresses` (`idaddress`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_carts_users` FOREIGN KEY (`iduser`) REFERENCES `tb_users` (`iduser`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
