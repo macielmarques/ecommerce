@@ -10,8 +10,8 @@
 
 		const SESSION = "User";
 		const SECRET = "HcodePhp7_Secret";
-		const ERROR = "userError";
-		const ERROR_REGISTER = "userErrorRegister";
+		const ERROR = "UserError";
+		const ERROR_REGISTER = "UserErrorRegister";
 
 		public static function getFromSession()
 		{
@@ -316,14 +316,14 @@
 
 		}
 
-		public static function setMsgError($msg)
+		public static function setError($msg)
         {
 
         	$_SESSION[User::ERROR] = $msg;
 
         } 
 
-        public static function getMsgError()
+        public static function getError()
         {
 
         	$msg = (isset($_SESSION[User::ERROR]) && $_SESSION[User::ERROR]) ? $_SESSION[User::ERROR] : '';

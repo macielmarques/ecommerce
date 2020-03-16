@@ -7,7 +7,6 @@
 	use \Hcode\Model\Address;
 	use \Hcode\Model\User;
 
-
 	$app->get('/', function() {
 
 		$products = Product::listAll();
@@ -175,7 +174,7 @@
 
 		} catch(Exception $e) {
 
-			User::setError($e->getmessage());
+			User::setError($e->getMessage());
 
 		}
 

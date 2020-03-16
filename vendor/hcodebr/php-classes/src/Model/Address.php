@@ -7,18 +7,6 @@
 
 	class Address extends Model {
 
-		public function C()
-		{
-
-			
-
-		}
-
-
-
-
-
-
 
 	}	
 
