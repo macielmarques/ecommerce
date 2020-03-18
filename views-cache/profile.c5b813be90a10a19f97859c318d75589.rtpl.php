@@ -21,21 +21,24 @@
 
             </div>
             <div class="col-md-9">
+                
                 <?php if( $profileMsg != '' ){ ?>
 
-                <div class="alert alert-success">
-                    <?php echo htmlspecialchars( $profileMsg, ENT_COMPAT, 'UTF-8', FALSE ); ?>
+                    <div class="alert alert-success">
+                        <?php echo htmlspecialchars( $profileMsg, ENT_COMPAT, 'UTF-8', FALSE ); ?>
 
-                </div>
+                    </div>
                 <?php } ?>
+
 
                 <?php if( $profileError != '' ){ ?>
 
-                <div class="alert alert-danger">
-                    <?php echo htmlspecialchars( $profileError, ENT_COMPAT, 'UTF-8', FALSE ); ?>
+                    <div class="alert alert-danger">
+                        <?php echo htmlspecialchars( $profileError, ENT_COMPAT, 'UTF-8', FALSE ); ?>
 
-                </div>
-                <?php } ?>                
+                    </div>
+                <?php } ?>    
+                            
                 <form method="post" action="/profile">
                     <div class="form-group">
                     <label for="desperson">Nome completo</label>
