@@ -19,7 +19,7 @@
   		<div class="box box-primary">
             
             <div class="box-header">
-              <a href="/admin/categories" class="btn btn-success">Cadastrar Categoria</a>
+              <a href="/admin/categories/create" class="btn btn-success">Cadastrar Categoria</a>
               <div class="box-tools">
                 <form action="/admin/categories">
                   <div class="input-group input-group-sm" style="width: 150px;">

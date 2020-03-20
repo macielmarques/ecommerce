@@ -19,7 +19,7 @@
   		<div class="box box-primary">
             
             <div class="box-header">
-              <a href="/admin/products" class="btn btn-success">Cadastrar Produto</a>
+              <a href="/admin/products/create" class="btn btn-success">Cadastrar Produto</a>
               <div class="box-tools">
                 <form action="/admin/products">
                   <div class="input-group input-group-sm" style="width: 150px;">
