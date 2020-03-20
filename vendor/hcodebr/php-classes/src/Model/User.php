@@ -455,7 +455,7 @@
 				LIMIT $start, $itemsPerPage;
 			");
 
-			$resultTotal = $sql->select("SELECT FOUND_ROWS() AS nrtotal");
+			$resultTotal = $sql->select("SELECT FOUND_ROWS() AS nrtotal;");
 
 			return [
 				'data'=>$results,
@@ -483,7 +483,7 @@
 				':search'=>'%' .$search. '%'
 			]);
 
-			$resultTotal = $sql->select("SELECT FOUND_ROWS() AS nrtotal");
+			$resultTotal = $sql->select("SELECT FOUND_ROWS() AS nrtotal;");
 
 			return [
 				'data'=>$results,
