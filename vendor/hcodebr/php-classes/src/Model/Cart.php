@@ -209,7 +209,7 @@
 				$qs = http_build_query([
 					'nCdEmpresa'=>'',
 					'sDsSenha'=>'',
-					'nCdServico'=>'40010',
+					'nCdServico'=>'41106',
 					'sCepOrigem'=>'09853120',
 					'sCepDestino'=>$nrzipcode,
 					'nVlPeso'=>$totals['vlweight'],
