@@ -39,8 +39,8 @@
                     <th style="width: 10px">#</th>
                     <th>Nome da Produto</th>
                     <th>Preço</th>
-                    <th>Largura</th>
                     <th>Altura</th>
+                    <th>Largura</th>
                     <th>Comprimento</th>
                     <th>Peso</th>
                     <th style="width: 140px">&nbsp;</th>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 14, 2020 at 11:51 PM
+-- Generation Time: Mar 23, 2020 at 04:46 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.3
 
@@ -26,6 +26,36 @@ DELIMITER $$
 --
 -- Procedures
 --
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addresses_save` (`pidaddress` INT(11), `pidperson` INT(11), `pdesaddress` VARCHAR(128), `pdesnumber` VARCHAR(16), `pdescomplement` VARCHAR(32), `pdescity` VARCHAR(32), `pdesstate` VARCHAR(32), `pdescountry` VARCHAR(32), `pdeszipcode` CHAR(8), `pdesdistrict` VARCHAR(32))  BEGIN
+
+	IF pidaddress > 0 THEN
+		
+		UPDATE tb_addresses
+        SET
+			idperson = pidperson,
+            desaddress = pdesaddress,
+            desnumber = pdesnumber,
+            descomplement = pdescomplement,
+            descity = pdescity,
+            desstate = pdesstate,
+            descountry = pdescountry,
+            deszipcode = pdeszipcode, 
+            desdistrict = pdesdistrict
+		WHERE idaddress = pidaddress;
+        
+    ELSE
+		
+		INSERT INTO tb_addresses (idperson, desaddress, desnumber, descomplement, descity, desstate, descountry, deszipcode, desdistrict)
+        VALUES(pidperson, pdesaddress, pdesnumber, pdescomplement, pdescity, pdesstate, pdescountry, pdeszipcode, pdesdistrict);
+        
+        SET pidaddress = LAST_INSERT_ID();
+        
+    END IF;
+    
+    SELECT * FROM tb_addresses WHERE idaddress = pidaddress;
+
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_carts_save` (`pidcart` INT, `pdessessionid` VARCHAR(64), `piduser` INT, `pdeszipcode` CHAR(8), `pvlfreight` DECIMAL(10,2), `pnrdays` INT)  BEGIN
 
     IF pidcart > 0 THEN
@@ -69,6 +99,38 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_categories_save` (`pidcategory` 
     END IF;
     
     SELECT * FROM tb_categories WHERE idcategory = pidcategory;
+    
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_orders_save` (`pidorder` INT, `pidcart` INT(11), `piduser` INT(11), `pidstatus` INT(11), `pidaddress` INT(11), `pvltotal` DECIMAL(10,2))  BEGIN
+	
+	IF pidorder > 0 THEN
+		
+		UPDATE tb_orders
+        SET
+			idcart = pidcart,
+            iduser = piduser,
+            idstatus = pidstatus,
+            idaddress = pidaddress,
+            vltotal = pvltotal
+		WHERE idorder = pidorder;
+        
+    ELSE
+    
+		INSERT INTO tb_orders (idcart, iduser, idstatus, idaddress, vltotal)
+        VALUES(pidcart, piduser, pidstatus, pidaddress, pvltotal);
+		
+		SET pidorder = LAST_INSERT_ID();
+        
+    END IF;
+    
+    SELECT * 
+    FROM tb_orders a
+    INNER JOIN tb_ordersstatus b USING(idstatus)
+    INNER JOIN tb_carts c USING(idcart)
+    INNER JOIN tb_users d ON d.iduser = a.iduser
+    INNER JOIN tb_addresses e USING(idaddress)
+    WHERE idorder = pidorder;
     
 END$$
 
@@ -177,13 +239,24 @@ CREATE TABLE `tb_addresses` (
   `idaddress` int(11) NOT NULL,
   `idperson` int(11) NOT NULL,
   `desaddress` varchar(128) NOT NULL,
+  `desnumber` varchar(16) NOT NULL,
   `descomplement` varchar(32) DEFAULT NULL,
   `descity` varchar(32) NOT NULL,
   `desstate` varchar(32) NOT NULL,
   `descountry` varchar(32) NOT NULL,
-  `nrzipcode` int(11) NOT NULL,
+  `deszipcode` char(8) NOT NULL,
+  `desdistrict` varchar(32) NOT NULL,
   `dtregister` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `tb_addresses`
+--
+
+INSERT INTO `tb_addresses` (`idaddress`, `idperson`, `desaddress`, `desnumber`, `descomplement`, `descity`, `desstate`, `descountry`, `deszipcode`, `desdistrict`, `dtregister`) VALUES
+(1, 2, 'Avenida Paulista', '10', 'de 612 a 1510 - lado par', 'São Paulo', 'SP', 'Brasil', '01310100', 'Bela Vista', '2020-03-23 15:15:56'),
+(2, 1, 'Avenida Paulista', '10', 'de 612 a 1510 - lado par', 'São Paulo', 'SP', 'Brasil', '01310100', 'Bela Vista', '2020-03-23 15:35:44'),
+(3, 1, 'Avenida Paulista', '10', 'de 612 a 1510 - lado par', 'São Paulo', 'SP', 'Brasil', '01310100', 'Bela Vista', '2020-03-23 15:39:25');
 
 -- --------------------------------------------------------
 
@@ -206,7 +279,11 @@ CREATE TABLE `tb_carts` (
 --
 
 INSERT INTO `tb_carts` (`idcart`, `dessessionid`, `iduser`, `deszipcode`, `vlfreight`, `nrdays`, `dtregister`) VALUES
-(1, 'cj0030o0itubihece7q0194eu2', NULL, NULL, NULL, NULL, '2020-03-14 21:47:23');
+(1, '8hbbf6m4ms2c6cqeba42v7lq8f', NULL, '01310100', '0.00', 0, '2020-03-23 00:44:13'),
+(2, 'u9ejc6c0v9n4je1fv9ugn7t25n', NULL, '22041080', '97.34', 8, '2020-03-23 02:08:23'),
+(3, 'hu0ov9c0oqbomaeau9vajkpet9', NULL, '08226021', '0.00', 0, '2020-03-23 02:22:06'),
+(4, 'lgf0eplg3qm52vl25mr7bfk00r', NULL, '08226021', '0.00', 0, '2020-03-23 12:15:42'),
+(5, '8umelftluftiqp284sb8h7gfpd', NULL, '01310100', '49.86', 8, '2020-03-23 12:36:23');
 
 -- --------------------------------------------------------
 
@@ -221,6 +298,47 @@ CREATE TABLE `tb_cartsproducts` (
   `dtremoved` datetime NOT NULL,
   `dtregister` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `tb_cartsproducts`
+--
+
+INSERT INTO `tb_cartsproducts` (`idcartproduct`, `idcart`, `idproduct`, `dtremoved`, `dtregister`) VALUES
+(1, 1, 1, '2020-03-22 23:01:07', '2020-03-23 01:16:14'),
+(2, 1, 3, '2020-03-22 23:00:45', '2020-03-23 01:34:32'),
+(3, 2, 2, '0000-00-00 00:00:00', '2020-03-23 02:08:32'),
+(4, 3, 3, '2020-03-23 00:18:43', '2020-03-23 02:22:19'),
+(5, 3, 1, '2020-03-23 00:18:44', '2020-03-23 02:22:34'),
+(6, 3, 3, '2020-03-23 00:19:23', '2020-03-23 03:18:52'),
+(7, 4, 3, '2020-03-23 09:18:23', '2020-03-23 12:15:47'),
+(8, 4, 2, '2020-03-23 09:18:22', '2020-03-23 12:16:29'),
+(9, 4, 2, '2020-03-23 09:18:56', '2020-03-23 12:18:32'),
+(10, 4, 4, '2020-03-23 09:19:52', '2020-03-23 12:19:34'),
+(11, 4, 4, '2020-03-23 09:20:25', '2020-03-23 12:19:59'),
+(12, 4, 4, '2020-03-23 09:26:30', '2020-03-23 12:21:08'),
+(13, 4, 3, '2020-03-23 10:08:11', '2020-03-23 12:26:45'),
+(14, 4, 5, '2020-03-23 11:46:44', '2020-03-23 12:28:00'),
+(15, 5, 3, '2020-03-23 10:01:06', '2020-03-23 12:36:30'),
+(16, 5, 4, '2020-03-23 10:01:09', '2020-03-23 12:59:41'),
+(17, 4, 4, '2020-03-23 11:54:20', '2020-03-23 13:07:17'),
+(18, 5, 4, '2020-03-23 11:56:48', '2020-03-23 14:56:26'),
+(19, 5, 4, '2020-03-23 12:03:49', '2020-03-23 14:56:55'),
+(20, 5, 2, '2020-03-23 12:02:45', '2020-03-23 14:57:09'),
+(21, 5, 3, '2020-03-23 12:15:12', '2020-03-23 15:04:54'),
+(22, 5, 4, '2020-03-23 12:19:09', '2020-03-23 15:15:20'),
+(23, 5, 3, '2020-03-23 12:19:03', '2020-03-23 15:15:30'),
+(24, 5, 3, '2020-03-23 12:20:44', '2020-03-23 15:19:15'),
+(25, 5, 3, '2020-03-23 12:21:13', '2020-03-23 15:20:35'),
+(26, 5, 2, '2020-03-23 12:21:18', '2020-03-23 15:21:08'),
+(27, 5, 2, '2020-03-23 12:24:41', '2020-03-23 15:21:24'),
+(28, 5, 3, '2020-03-23 12:25:38', '2020-03-23 15:24:49'),
+(29, 5, 4, '2020-03-23 12:25:52', '2020-03-23 15:25:44'),
+(30, 5, 2, '2020-03-23 12:26:05', '2020-03-23 15:25:59'),
+(31, 5, 3, '2020-03-23 12:32:00', '2020-03-23 15:31:23'),
+(32, 5, 3, '2020-03-23 12:32:01', '2020-03-23 15:31:40'),
+(33, 5, 3, '2020-03-23 12:33:17', '2020-03-23 15:31:49'),
+(34, 5, 5, '2020-03-23 12:41:11', '2020-03-23 15:33:27'),
+(35, 5, 3, '2020-03-23 12:41:42', '2020-03-23 15:41:34');
 
 -- --------------------------------------------------------
 
@@ -239,10 +357,10 @@ CREATE TABLE `tb_categories` (
 --
 
 INSERT INTO `tb_categories` (`idcategory`, `descategory`, `dtregister`) VALUES
-(3, 'Adroid', '2020-03-09 18:23:10'),
-(4, 'Apple', '2020-03-09 18:48:19'),
-(5, 'Motorola', '2020-03-09 18:48:30'),
-(6, 'Sumsung', '2020-03-09 18:48:42');
+(1, 'Adroid', '2020-03-23 00:52:27'),
+(2, 'Apple', '2020-03-23 00:54:02'),
+(3, 'Motorola', '2020-03-23 00:54:26'),
+(4, 'Sumsung', '2020-03-23 00:54:33');
 
 -- --------------------------------------------------------
 
@@ -255,9 +373,19 @@ CREATE TABLE `tb_orders` (
   `idcart` int(11) NOT NULL,
   `iduser` int(11) NOT NULL,
   `idstatus` int(11) NOT NULL,
+  `idaddress` int(11) NOT NULL,
   `vltotal` decimal(10,2) NOT NULL,
   `dtregister` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `tb_orders`
+--
+
+INSERT INTO `tb_orders` (`idorder`, `idcart`, `iduser`, `idstatus`, `idaddress`, `vltotal`, `dtregister`) VALUES
+(1, 5, 1, 1, 1, '3842.23', '2020-03-23 14:57:23'),
+(2, 5, 2, 1, 1, '1613.28', '2020-03-23 15:15:57'),
+(3, 5, 1, 1, 3, '1053.42', '2020-03-23 15:39:25');
 
 -- --------------------------------------------------------
 
@@ -276,10 +404,10 @@ CREATE TABLE `tb_ordersstatus` (
 --
 
 INSERT INTO `tb_ordersstatus` (`idstatus`, `desstatus`, `dtregister`) VALUES
-(1, 'Em Aberto', '2017-03-13 03:00:00'),
-(2, 'Aguardando Pagamento', '2017-03-13 03:00:00'),
-(3, 'Pago', '2017-03-13 03:00:00'),
-(4, 'Entregue', '2017-03-13 03:00:00');
+(1, 'Em Aberto', '2020-03-23 14:18:39'),
+(2, 'Aguardando Pagamento', '2020-03-23 14:20:13'),
+(3, 'Pago', '2020-03-23 14:20:58'),
+(4, 'Entregue', '2020-03-23 14:21:36');
 
 -- --------------------------------------------------------
 
@@ -300,11 +428,8 @@ CREATE TABLE `tb_persons` (
 --
 
 INSERT INTO `tb_persons` (`idperson`, `desperson`, `desemail`, `nrphone`, `dtregister`) VALUES
-(1, 'admin', 'admin@hcode.com.br', 2147483647, '2017-03-01 03:00:00'),
-(7, 'Suporte', 'suporte@hcode.com.br', 1112345678, '2017-03-15 16:10:27'),
-(13, 'Maciel', 'macielmrqs@gmail.com', 83981102034, '2020-02-29 01:07:10'),
-(16, 'suporteadmin', 'macielsuporte15@gmail.com', 83981102034, '2020-02-29 15:30:10'),
-(17, 'suporte', 'macielsuporte15@gmail.com', 83981102034, '2020-02-29 15:38:02');
+(1, 'admin', 'macielsuporte15@gmail.com', 123465789, '2020-03-23 00:47:24'),
+(2, 'suporte', 'macielsuporte15@gmail.com', 123456789, '2020-03-23 02:13:52');
 
 -- --------------------------------------------------------
 
@@ -329,12 +454,11 @@ CREATE TABLE `tb_products` (
 --
 
 INSERT INTO `tb_products` (`idproduct`, `desproduct`, `vlprice`, `vlwidth`, `vlheight`, `vllength`, `vlweight`, `desurl`, `dtregister`) VALUES
-(4, 'Ipad Celular 32GB Wi-Fi Tela 9,7\" Câmera 8MP Cinza Espacial - Ap', '2599.95', '0.75', '16.95', '24.50', '0.47', 'ipad-32gb', '2020-03-12 00:57:10'),
-(7, 'Smartphone Motorola Moto G5 Plus', '1135.23', '15.20', '7.40', '0.70', '0.16', 'smartphone-motorola-moto-g5-plus', '2020-03-12 23:38:15'),
-(8, 'Smartphone Moto Z Play', '1887.78', '14.10', '0.90', '1.16', '0.13', 'smartphone-moto-z-play', '2020-03-12 23:38:15'),
-(9, 'Smartphone Samsung Galaxy J5 Pro', '1299.00', '14.60', '7.10', '0.80', '0.16', 'smartphone-samsung-galaxy-j5', '2020-03-12 23:38:15'),
-(10, 'Smartphone Samsung Galaxy J7 Prime', '1149.00', '15.10', '7.50', '0.80', '0.16', 'smartphone-samsung-galaxy-j7', '2020-03-12 23:38:15'),
-(11, 'Smartphone Samsung Galaxy J3 Dual', '679.90', '14.20', '7.10', '0.70', '0.14', 'smartphone-samsung-galaxy-j3', '2020-03-12 23:38:15');
+(1, 'Smartphone Samsung Galaxy M10 32GB Dual Chip Android 9.0 Tela 6,', '636.09', '15.50', '7.50', '0.70', '0.16', 'Galaxy-M10', '2020-03-23 01:15:33'),
+(2, 'Ipad Celular 32GB Wi-Fi Tela 9,7\" Câmera 8MP Cinza Espacial - Ap', '2954.99', '16.95', '0.75', '24.50', '0.47', 'ipad-32gb', '2020-03-23 01:24:49'),
+(3, 'Smartphone Moto G 5S Dual Chip Android 7.0 Tela 5.2\" Snapdradon ', '771.21', '14.90', '7.30', '0.90', '0.15', 'Moto-G5S', '2020-03-23 01:31:02'),
+(4, 'Smartphone Samsung Galaxy J4+ 32GB Dual Chip Android Tela Infini', '776.67', '16.10', '7.60', '0.79', '0.17', 'SM-J415G', '2020-03-23 01:39:43'),
+(5, 'Smartphone Samsung Galaxy J6 64GB Dual Chip Android 8.0 Tela 5.6', '999.00', '14.90', '7.00', '0.80', '0.15', 'SM-J600GT', '2020-03-23 01:45:40');
 
 -- --------------------------------------------------------
 
@@ -352,12 +476,15 @@ CREATE TABLE `tb_productscategories` (
 --
 
 INSERT INTO `tb_productscategories` (`idcategory`, `idproduct`) VALUES
-(3, 7),
-(3, 8),
-(3, 9),
-(3, 10),
-(3, 11),
-(5, 7);
+(1, 1),
+(1, 3),
+(1, 4),
+(1, 5),
+(2, 2),
+(3, 3),
+(4, 1),
+(4, 4),
+(4, 5);
 
 -- --------------------------------------------------------
 
@@ -379,8 +506,8 @@ CREATE TABLE `tb_users` (
 --
 
 INSERT INTO `tb_users` (`iduser`, `idperson`, `deslogin`, `despassword`, `inadmin`, `dtregister`) VALUES
-(1, 1, 'admin', '$2y$12$YlooCyNvyTji8bPRcrfNfOKnVMmZA9ViM2A3IpFjmrpIbp5ovNmga', 1, '2017-03-13 03:00:00'),
-(17, 17, 'suporte', '$2y$12$H03MbRb1vc5YKqJcc4tIruFL.7PRVQbItVBHAa5CvQ/mXu4wifr/i', 1, '2020-02-29 15:38:02');
+(1, 1, 'admin', '$2y$12$gx0Ydl.y.xqGVB0xjALFK.ThRRd.0476gsjih2U1eOZaQKJlTZ2Fi', 1, '2020-03-23 00:48:21'),
+(2, 2, 'macielsuporte15@gmail.com', '$2y$12$FAvFyidf8ZarkizrvwNeb.EJ27wTqnlN8e4xL2vvZTfy3J86mb5ji', 0, '2020-03-23 02:13:52');
 
 -- --------------------------------------------------------
 
@@ -418,195 +545,9 @@ CREATE TABLE `tb_userspasswordsrecoveries` (
 --
 
 INSERT INTO `tb_userspasswordsrecoveries` (`idrecovery`, `iduser`, `desip`, `dtrecovery`, `dtregister`) VALUES
-(1, 7, '127.0.0.1', NULL, '2017-03-15 16:10:59'),
-(2, 7, '127.0.0.1', '2017-03-15 13:33:45', '2017-03-15 16:11:18'),
-(3, 7, '127.0.0.1', '2017-03-15 13:37:35', '2017-03-15 16:37:12'),
-(4, 13, '127.0.0.1', NULL, '2020-02-29 01:08:51'),
-(5, 13, '127.0.0.1', NULL, '2020-02-29 01:11:54'),
-(6, 13, '127.0.0.1', NULL, '2020-02-29 01:12:01'),
-(7, 13, '127.0.0.1', NULL, '2020-02-29 01:23:51'),
-(8, 13, '127.0.0.1', NULL, '2020-02-29 01:25:48'),
-(9, 13, '127.0.0.1', NULL, '2020-02-29 01:27:07'),
-(10, 13, '127.0.0.1', NULL, '2020-02-29 01:27:12'),
-(11, 13, '127.0.0.1', NULL, '2020-02-29 13:50:23'),
-(12, 13, '127.0.0.1', NULL, '2020-02-29 14:20:43'),
-(13, 13, '127.0.0.1', NULL, '2020-02-29 14:20:48'),
-(14, 13, '127.0.0.1', NULL, '2020-02-29 14:21:12'),
-(15, 13, '127.0.0.1', NULL, '2020-02-29 14:22:15'),
-(16, 13, '127.0.0.1', NULL, '2020-02-29 14:23:41'),
-(17, 13, '127.0.0.1', NULL, '2020-02-29 14:50:30'),
-(18, 13, '127.0.0.1', NULL, '2020-02-29 14:50:54'),
-(19, 13, '127.0.0.1', NULL, '2020-02-29 15:05:44'),
-(20, 13, '127.0.0.1', NULL, '2020-02-29 15:05:48'),
-(21, 17, '127.0.0.1', NULL, '2020-02-29 15:40:03'),
-(22, 17, '127.0.0.1', NULL, '2020-02-29 16:14:51'),
-(23, 17, '127.0.0.1', NULL, '2020-02-29 16:15:06'),
-(24, 17, '127.0.0.1', NULL, '2020-02-29 16:15:17'),
-(25, 17, '127.0.0.1', NULL, '2020-02-29 17:53:12'),
-(26, 17, '127.0.0.1', NULL, '2020-02-29 18:13:41'),
-(27, 17, '127.0.0.1', NULL, '2020-02-29 18:14:06'),
-(28, 17, '127.0.0.1', NULL, '2020-02-29 18:14:13'),
-(29, 17, '127.0.0.1', NULL, '2020-02-29 18:15:23'),
-(30, 17, '127.0.0.1', NULL, '2020-02-29 18:15:36'),
-(31, 17, '127.0.0.1', NULL, '2020-02-29 18:17:12'),
-(32, 17, '127.0.0.1', NULL, '2020-02-29 18:17:51'),
-(33, 17, '127.0.0.1', NULL, '2020-02-29 18:21:24'),
-(34, 17, '127.0.0.1', NULL, '2020-02-29 18:21:28'),
-(35, 17, '127.0.0.1', NULL, '2020-02-29 18:21:37'),
-(36, 17, '127.0.0.1', NULL, '2020-02-29 18:28:10'),
-(37, 17, '127.0.0.1', NULL, '2020-02-29 18:38:24'),
-(38, 17, '127.0.0.1', NULL, '2020-02-29 18:38:45'),
-(39, 17, '127.0.0.1', NULL, '2020-03-01 02:19:48'),
-(40, 17, '127.0.0.1', NULL, '2020-03-01 02:19:57'),
-(41, 17, '127.0.0.1', NULL, '2020-03-01 02:44:29'),
-(42, 17, '127.0.0.1', NULL, '2020-03-01 02:45:29'),
-(43, 17, '127.0.0.1', NULL, '2020-03-01 02:45:34'),
-(44, 17, '127.0.0.1', NULL, '2020-03-01 02:46:29'),
-(45, 17, '127.0.0.1', NULL, '2020-03-01 02:48:27'),
-(46, 17, '127.0.0.1', NULL, '2020-03-01 02:49:13'),
-(47, 17, '127.0.0.1', NULL, '2020-03-01 02:49:24'),
-(48, 17, '127.0.0.1', NULL, '2020-03-01 02:51:25'),
-(49, 17, '127.0.0.1', NULL, '2020-03-01 02:51:51'),
-(50, 17, '127.0.0.1', NULL, '2020-03-01 02:52:03'),
-(51, 17, '127.0.0.1', NULL, '2020-03-01 02:53:27'),
-(52, 17, '127.0.0.1', NULL, '2020-03-01 02:59:11'),
-(53, 17, '127.0.0.1', NULL, '2020-03-01 02:59:16'),
-(54, 17, '127.0.0.1', NULL, '2020-03-01 03:15:18'),
-(55, 17, '127.0.0.1', NULL, '2020-03-01 03:15:24'),
-(56, 17, '127.0.0.1', NULL, '2020-03-01 03:25:47'),
-(57, 17, '127.0.0.1', NULL, '2020-03-01 03:25:51'),
-(58, 17, '127.0.0.1', NULL, '2020-03-01 03:38:16'),
-(59, 17, '127.0.0.1', NULL, '2020-03-01 03:38:20'),
-(60, 17, '127.0.0.1', NULL, '2020-03-01 03:38:24'),
-(61, 17, '127.0.0.1', NULL, '2020-03-01 03:39:55'),
-(62, 17, '127.0.0.1', NULL, '2020-03-01 03:53:44'),
-(63, 17, '127.0.0.1', NULL, '2020-03-01 04:01:57'),
-(64, 17, '127.0.0.1', NULL, '2020-03-01 04:04:18'),
-(65, 17, '127.0.0.1', NULL, '2020-03-01 04:04:21'),
-(66, 17, '127.0.0.1', NULL, '2020-03-01 04:04:38'),
-(67, 17, '127.0.0.1', NULL, '2020-03-01 04:06:47'),
-(68, 17, '127.0.0.1', NULL, '2020-03-01 04:07:26'),
-(69, 17, '127.0.0.1', NULL, '2020-03-01 04:07:44'),
-(70, 17, '127.0.0.1', NULL, '2020-03-01 04:43:34'),
-(71, 17, '127.0.0.1', NULL, '2020-03-01 04:45:41'),
-(72, 17, '127.0.0.1', NULL, '2020-03-01 04:47:28'),
-(73, 17, '127.0.0.1', NULL, '2020-03-01 04:47:40'),
-(74, 17, '127.0.0.1', NULL, '2020-03-01 04:48:24'),
-(75, 17, '127.0.0.1', NULL, '2020-03-01 04:49:09'),
-(76, 17, '127.0.0.1', NULL, '2020-03-01 04:50:18'),
-(77, 17, '127.0.0.1', NULL, '2020-03-01 04:50:22'),
-(78, 17, '127.0.0.1', NULL, '2020-03-01 04:53:18'),
-(79, 17, '127.0.0.1', NULL, '2020-03-01 04:53:27'),
-(80, 17, '127.0.0.1', NULL, '2020-03-01 04:55:32'),
-(81, 17, '127.0.0.1', NULL, '2020-03-01 19:13:46'),
-(82, 17, '127.0.0.1', NULL, '2020-03-01 19:26:34'),
-(83, 17, '127.0.0.1', NULL, '2020-03-01 19:26:43'),
-(84, 17, '127.0.0.1', NULL, '2020-03-01 19:34:36'),
-(85, 17, '127.0.0.1', NULL, '2020-03-01 19:59:46'),
-(86, 17, '127.0.0.1', NULL, '2020-03-01 20:06:47'),
-(87, 17, '127.0.0.1', NULL, '2020-03-02 00:11:36'),
-(88, 17, '127.0.0.1', NULL, '2020-03-02 00:14:50'),
-(89, 17, '127.0.0.1', NULL, '2020-03-02 00:15:09'),
-(90, 17, '127.0.0.1', NULL, '2020-03-02 00:17:12'),
-(91, 17, '127.0.0.1', NULL, '2020-03-02 00:19:36'),
-(92, 17, '127.0.0.1', NULL, '2020-03-02 00:19:43'),
-(93, 17, '127.0.0.1', NULL, '2020-03-02 00:21:17'),
-(94, 17, '127.0.0.1', NULL, '2020-03-02 00:21:22'),
-(95, 17, '127.0.0.1', NULL, '2020-03-02 00:23:55'),
-(96, 17, '127.0.0.1', NULL, '2020-03-02 00:24:42'),
-(97, 17, '127.0.0.1', NULL, '2020-03-02 00:31:40'),
-(98, 17, '127.0.0.1', NULL, '2020-03-02 00:34:35'),
-(99, 17, '127.0.0.1', NULL, '2020-03-02 00:38:42'),
-(100, 17, '127.0.0.1', NULL, '2020-03-02 00:39:14'),
-(101, 17, '127.0.0.1', NULL, '2020-03-02 00:48:58'),
-(102, 17, '127.0.0.1', NULL, '2020-03-02 00:52:32'),
-(103, 17, '127.0.0.1', NULL, '2020-03-02 00:52:36'),
-(104, 17, '127.0.0.1', NULL, '2020-03-02 00:54:05'),
-(105, 17, '127.0.0.1', NULL, '2020-03-02 00:57:41'),
-(106, 17, '127.0.0.1', NULL, '2020-03-02 00:57:56'),
-(107, 17, '127.0.0.1', NULL, '2020-03-02 00:58:11'),
-(108, 17, '127.0.0.1', NULL, '2020-03-02 00:59:01'),
-(109, 17, '127.0.0.1', NULL, '2020-03-02 00:59:28'),
-(110, 17, '127.0.0.1', NULL, '2020-03-02 01:00:51'),
-(111, 17, '127.0.0.1', NULL, '2020-03-02 01:01:42'),
-(112, 17, '127.0.0.1', NULL, '2020-03-02 01:01:47'),
-(113, 17, '127.0.0.1', NULL, '2020-03-02 01:02:32'),
-(114, 17, '127.0.0.1', NULL, '2020-03-02 01:02:43'),
-(115, 17, '127.0.0.1', NULL, '2020-03-02 01:32:40'),
-(116, 17, '127.0.0.1', NULL, '2020-03-02 01:36:06'),
-(117, 17, '127.0.0.1', NULL, '2020-03-02 01:37:48'),
-(118, 17, '127.0.0.1', NULL, '2020-03-02 01:38:55'),
-(119, 17, '127.0.0.1', NULL, '2020-03-02 01:39:15'),
-(120, 17, '127.0.0.1', NULL, '2020-03-02 01:40:07'),
-(121, 17, '127.0.0.1', NULL, '2020-03-02 01:45:24'),
-(122, 17, '127.0.0.1', NULL, '2020-03-02 01:45:29'),
-(123, 17, '127.0.0.1', NULL, '2020-03-02 01:45:57'),
-(124, 17, '127.0.0.1', NULL, '2020-03-02 01:46:20'),
-(125, 17, '127.0.0.1', NULL, '2020-03-02 01:47:22'),
-(126, 17, '127.0.0.1', NULL, '2020-03-02 01:47:49'),
-(127, 17, '127.0.0.1', NULL, '2020-03-02 01:48:40'),
-(128, 17, '127.0.0.1', NULL, '2020-03-02 01:49:13'),
-(129, 17, '127.0.0.1', NULL, '2020-03-02 01:49:30'),
-(130, 17, '127.0.0.1', NULL, '2020-03-02 01:50:52'),
-(131, 17, '127.0.0.1', NULL, '2020-03-02 01:51:51'),
-(132, 17, '127.0.0.1', NULL, '2020-03-02 01:52:21'),
-(133, 17, '127.0.0.1', NULL, '2020-03-02 01:54:01'),
-(134, 17, '127.0.0.1', NULL, '2020-03-02 01:54:51'),
-(135, 17, '127.0.0.1', NULL, '2020-03-02 01:55:30'),
-(136, 17, '127.0.0.1', NULL, '2020-03-02 01:59:49'),
-(137, 17, '127.0.0.1', NULL, '2020-03-02 02:01:02'),
-(138, 17, '127.0.0.1', NULL, '2020-03-02 02:01:08'),
-(139, 17, '127.0.0.1', NULL, '2020-03-02 02:03:05'),
-(140, 17, '127.0.0.1', NULL, '2020-03-02 02:05:16'),
-(141, 17, '127.0.0.1', NULL, '2020-03-02 02:06:18'),
-(142, 17, '127.0.0.1', NULL, '2020-03-02 02:08:17'),
-(143, 17, '127.0.0.1', NULL, '2020-03-02 02:08:31'),
-(144, 17, '127.0.0.1', NULL, '2020-03-02 02:10:48'),
-(145, 17, '127.0.0.1', NULL, '2020-03-02 02:11:11'),
-(146, 17, '127.0.0.1', NULL, '2020-03-08 06:23:46'),
-(147, 17, '127.0.0.1', NULL, '2020-03-08 06:28:08'),
-(148, 17, '127.0.0.1', NULL, '2020-03-08 06:32:05'),
-(149, 17, '127.0.0.1', NULL, '2020-03-08 06:35:10'),
-(150, 17, '127.0.0.1', NULL, '2020-03-08 06:41:25'),
-(151, 17, '127.0.0.1', NULL, '2020-03-08 06:41:42'),
-(152, 17, '127.0.0.1', NULL, '2020-03-08 21:04:21'),
-(153, 17, '127.0.0.1', NULL, '2020-03-08 21:17:10'),
-(154, 17, '127.0.0.1', NULL, '2020-03-08 21:18:29'),
-(155, 17, '127.0.0.1', NULL, '2020-03-08 21:18:34'),
-(156, 17, '127.0.0.1', NULL, '2020-03-09 15:42:18'),
-(157, 17, '127.0.0.1', NULL, '2020-03-09 15:43:29'),
-(158, 17, '127.0.0.1', NULL, '2020-03-09 15:46:19'),
-(159, 17, '127.0.0.1', NULL, '2020-03-09 15:47:01'),
-(160, 17, '127.0.0.1', NULL, '2020-03-09 15:47:21'),
-(161, 17, '127.0.0.1', NULL, '2020-03-09 15:47:52'),
-(162, 17, '127.0.0.1', NULL, '2020-03-09 15:48:11'),
-(163, 17, '127.0.0.1', NULL, '2020-03-09 15:49:17'),
-(164, 17, '127.0.0.1', NULL, '2020-03-09 15:49:42'),
-(165, 17, '127.0.0.1', NULL, '2020-03-09 16:11:44'),
-(166, 17, '127.0.0.1', NULL, '2020-03-09 16:12:20'),
-(167, 17, '127.0.0.1', NULL, '2020-03-09 16:16:17'),
-(168, 17, '127.0.0.1', NULL, '2020-03-09 16:16:26'),
-(169, 17, '127.0.0.1', NULL, '2020-03-09 16:17:19'),
-(170, 17, '127.0.0.1', NULL, '2020-03-09 16:17:33'),
-(171, 17, '127.0.0.1', NULL, '2020-03-09 16:19:04'),
-(172, 17, '127.0.0.1', NULL, '2020-03-09 16:19:43'),
-(173, 17, '127.0.0.1', NULL, '2020-03-09 19:19:41'),
-(174, 17, '127.0.0.1', NULL, '2020-03-11 01:32:23'),
-(175, 17, '127.0.0.1', NULL, '2020-03-11 01:33:52'),
-(176, 17, '127.0.0.1', NULL, '2020-03-11 01:34:01'),
-(177, 17, '127.0.0.1', NULL, '2020-03-11 01:34:20'),
-(178, 17, '127.0.0.1', NULL, '2020-03-11 01:35:16'),
-(179, 17, '127.0.0.1', NULL, '2020-03-11 01:36:02'),
-(180, 17, '127.0.0.1', NULL, '2020-03-11 01:36:16'),
-(181, 17, '127.0.0.1', NULL, '2020-03-12 17:03:15'),
-(182, 17, '127.0.0.1', NULL, '2020-03-12 17:06:39'),
-(183, 17, '127.0.0.1', NULL, '2020-03-12 17:10:19'),
-(184, 17, '127.0.0.1', NULL, '2020-03-12 17:13:41'),
-(185, 17, '127.0.0.1', NULL, '2020-03-12 17:17:10'),
-(186, 17, '127.0.0.1', NULL, '2020-03-12 17:23:47'),
-(187, 17, '127.0.0.1', NULL, '2020-03-14 15:17:12'),
-(188, 17, '127.0.0.1', NULL, '2020-03-14 15:43:03'),
-(189, 17, '127.0.0.1', NULL, '2020-03-14 15:47:15');
+(1, 1, '127.0.0.1', NULL, '2020-03-23 00:48:57'),
+(2, 1, '127.0.0.1', NULL, '2020-03-23 00:49:03'),
+(3, 1, '127.0.0.1', '2020-03-22 21:49:53', '2020-03-23 00:49:09');
 
 --
 -- Indexes for dumped tables
@@ -645,9 +586,10 @@ ALTER TABLE `tb_categories`
 --
 ALTER TABLE `tb_orders`
   ADD PRIMARY KEY (`idorder`),
-  ADD KEY `FK_orders_carts_idx` (`idcart`),
   ADD KEY `FK_orders_users_idx` (`iduser`),
-  ADD KEY `fk_orders_ordersstatus_idx` (`idstatus`);
+  ADD KEY `fk_orders_ordersstatus_idx` (`idstatus`),
+  ADD KEY `fk_orders_carts_idx` (`idcart`),
+  ADD KEY `fk_orders_addresses_idx` (`idaddress`);
 
 --
 -- Indexes for table `tb_ordersstatus`
@@ -703,31 +645,31 @@ ALTER TABLE `tb_userspasswordsrecoveries`
 -- AUTO_INCREMENT for table `tb_addresses`
 --
 ALTER TABLE `tb_addresses`
-  MODIFY `idaddress` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idaddress` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `tb_carts`
 --
 ALTER TABLE `tb_carts`
-  MODIFY `idcart` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `idcart` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `tb_cartsproducts`
 --
 ALTER TABLE `tb_cartsproducts`
-  MODIFY `idcartproduct` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idcartproduct` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `tb_categories`
 --
 ALTER TABLE `tb_categories`
-  MODIFY `idcategory` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `idcategory` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `tb_orders`
 --
 ALTER TABLE `tb_orders`
-  MODIFY `idorder` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idorder` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `tb_ordersstatus`
@@ -739,19 +681,19 @@ ALTER TABLE `tb_ordersstatus`
 -- AUTO_INCREMENT for table `tb_persons`
 --
 ALTER TABLE `tb_persons`
-  MODIFY `idperson` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `idperson` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tb_products`
 --
 ALTER TABLE `tb_products`
-  MODIFY `idproduct` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `idproduct` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `tb_users`
 --
 ALTER TABLE `tb_users`
-  MODIFY `iduser` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `iduser` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tb_userslogs`
@@ -763,7 +705,7 @@ ALTER TABLE `tb_userslogs`
 -- AUTO_INCREMENT for table `tb_userspasswordsrecoveries`
 --
 ALTER TABLE `tb_userspasswordsrecoveries`
-  MODIFY `idrecovery` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=190;
+  MODIFY `idrecovery` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
@@ -792,6 +734,7 @@ ALTER TABLE `tb_cartsproducts`
 -- Constraints for table `tb_orders`
 --
 ALTER TABLE `tb_orders`
+  ADD CONSTRAINT `fk_orders_addresses` FOREIGN KEY (`idaddress`) REFERENCES `tb_addresses` (`idaddress`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_orders_carts` FOREIGN KEY (`idcart`) REFERENCES `tb_carts` (`idcart`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_orders_ordersstatus` FOREIGN KEY (`idstatus`) REFERENCES `tb_ordersstatus` (`idstatus`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_orders_users` FOREIGN KEY (`iduser`) REFERENCES `tb_users` (`iduser`) ON DELETE NO ACTION ON UPDATE NO ACTION;
