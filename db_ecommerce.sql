@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 23, 2020 at 04:46 PM
+-- Generation Time: Mar 23, 2020 at 07:06 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.3
 
@@ -256,7 +256,10 @@ CREATE TABLE `tb_addresses` (
 INSERT INTO `tb_addresses` (`idaddress`, `idperson`, `desaddress`, `desnumber`, `descomplement`, `descity`, `desstate`, `descountry`, `deszipcode`, `desdistrict`, `dtregister`) VALUES
 (1, 2, 'Avenida Paulista', '10', 'de 612 a 1510 - lado par', 'São Paulo', 'SP', 'Brasil', '01310100', 'Bela Vista', '2020-03-23 15:15:56'),
 (2, 1, 'Avenida Paulista', '10', 'de 612 a 1510 - lado par', 'São Paulo', 'SP', 'Brasil', '01310100', 'Bela Vista', '2020-03-23 15:35:44'),
-(3, 1, 'Avenida Paulista', '10', 'de 612 a 1510 - lado par', 'São Paulo', 'SP', 'Brasil', '01310100', 'Bela Vista', '2020-03-23 15:39:25');
+(3, 1, 'Avenida Paulista', '10', 'de 612 a 1510 - lado par', 'São Paulo', 'SP', 'Brasil', '01310100', 'Bela Vista', '2020-03-23 15:39:25'),
+(4, 2, 'Avenida Paulista', '500', 'de 612 a 1510 - lado par', 'São Paulo', 'SP', 'Brasil', '01310100', 'Bela Vista', '2020-03-23 17:54:09'),
+(5, 2, 'Avenida Paulista', '10', 'de 612 a 1510 - lado par', 'São Paulo', 'SP', 'Brasil', '01310100', 'Bela Vista', '2020-03-23 17:56:49'),
+(6, 2, 'Avenida Paulista', '10', 'de 612 a 1510 - lado par', 'São Paulo', 'SP', 'Brasil', '01310100', 'Bela Vista', '2020-03-23 18:02:52');
 
 -- --------------------------------------------------------
 
@@ -283,7 +286,8 @@ INSERT INTO `tb_carts` (`idcart`, `dessessionid`, `iduser`, `deszipcode`, `vlfre
 (2, 'u9ejc6c0v9n4je1fv9ugn7t25n', NULL, '22041080', '97.34', 8, '2020-03-23 02:08:23'),
 (3, 'hu0ov9c0oqbomaeau9vajkpet9', NULL, '08226021', '0.00', 0, '2020-03-23 02:22:06'),
 (4, 'lgf0eplg3qm52vl25mr7bfk00r', NULL, '08226021', '0.00', 0, '2020-03-23 12:15:42'),
-(5, '8umelftluftiqp284sb8h7gfpd', NULL, '01310100', '49.86', 8, '2020-03-23 12:36:23');
+(5, '8umelftluftiqp284sb8h7gfpd', NULL, '01310100', '93.54', 8, '2020-03-23 12:36:23'),
+(6, '62s8di6er032bkechk7fevesom', NULL, '01310100', '49.86', 8, '2020-03-23 17:53:14');
 
 -- --------------------------------------------------------
 
@@ -338,7 +342,10 @@ INSERT INTO `tb_cartsproducts` (`idcartproduct`, `idcart`, `idproduct`, `dtremov
 (32, 5, 3, '2020-03-23 12:32:01', '2020-03-23 15:31:40'),
 (33, 5, 3, '2020-03-23 12:33:17', '2020-03-23 15:31:49'),
 (34, 5, 5, '2020-03-23 12:41:11', '2020-03-23 15:33:27'),
-(35, 5, 3, '2020-03-23 12:41:42', '2020-03-23 15:41:34');
+(35, 5, 3, '2020-03-23 12:41:42', '2020-03-23 15:41:34'),
+(36, 5, 2, '0000-00-00 00:00:00', '2020-03-23 16:17:13'),
+(37, 6, 3, '2020-03-23 14:59:54', '2020-03-23 17:53:20'),
+(38, 6, 3, '2020-03-23 15:04:15', '2020-03-23 18:01:36');
 
 -- --------------------------------------------------------
 
@@ -385,7 +392,10 @@ CREATE TABLE `tb_orders` (
 INSERT INTO `tb_orders` (`idorder`, `idcart`, `iduser`, `idstatus`, `idaddress`, `vltotal`, `dtregister`) VALUES
 (1, 5, 1, 1, 1, '3842.23', '2020-03-23 14:57:23'),
 (2, 5, 2, 1, 1, '1613.28', '2020-03-23 15:15:57'),
-(3, 5, 1, 1, 3, '1053.42', '2020-03-23 15:39:25');
+(3, 5, 1, 1, 3, '1053.42', '2020-03-23 15:39:25'),
+(4, 6, 2, 1, 4, '821.07', '2020-03-23 17:54:10'),
+(5, 6, 2, 1, 5, '821.07', '2020-03-23 17:56:49'),
+(6, 6, 2, 1, 6, '821.07', '2020-03-23 18:02:53');
 
 -- --------------------------------------------------------
 
@@ -645,19 +655,19 @@ ALTER TABLE `tb_userspasswordsrecoveries`
 -- AUTO_INCREMENT for table `tb_addresses`
 --
 ALTER TABLE `tb_addresses`
-  MODIFY `idaddress` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `idaddress` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `tb_carts`
 --
 ALTER TABLE `tb_carts`
-  MODIFY `idcart` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `idcart` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `tb_cartsproducts`
 --
 ALTER TABLE `tb_cartsproducts`
-  MODIFY `idcartproduct` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `idcartproduct` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `tb_categories`
@@ -669,7 +679,7 @@ ALTER TABLE `tb_categories`
 -- AUTO_INCREMENT for table `tb_orders`
 --
 ALTER TABLE `tb_orders`
-  MODIFY `idorder` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `idorder` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `tb_ordersstatus`

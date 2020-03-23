@@ -37,11 +37,11 @@ action="https://pagseguro.uol.com.br/v2/checkout/payment.html">
         <input name="senderEmail" type="hidden" value="<?php echo htmlspecialchars( $order["desemail"], ENT_COMPAT, 'UTF-8', FALSE ); ?>">
 
          <!-- submit do form (obrigatório) -->  
-        <input alt="Pague com PagSeguro" name="submit"  type="image"  
-src="https://p.simg.uol.com.br/out/pagseguro/i/botoes/pagamentos/120x53-pagar.gif"/>  
+        <!-- <input alt="Pague com PagSeguro" name="submit"  type="image"  
+		src="https://p.simg.uol.com.br/out/pagseguro/i/botoes/pagamentos/120x53-pagar.gif"/> --> 
           
 </form> 
-<!--
+
 <script type="text/javascript">
 document.forms[0].submit();                
-</script> -->
+</script> 
